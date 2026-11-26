@@ -25,8 +25,11 @@ function expectedStatus(item) {
 }
 
 const failures = [];
+const latencies = [];
 for (const item of preguntas) {
+  const started = performance.now();
   const result = responder(item.pregunta, fichas);
+  latencies.push(performance.now() - started);
   const accepted = expectedStatus(item).includes(result.status);
   const missingSources = item.citas_esperadas.filter((expected) => !hasSource(result.sources, expected));
   const citationRequired = item.citas_esperadas.length > 0;
@@ -42,6 +45,8 @@ for (const item of preguntas) {
 console.log(`Fichas activas: ${fichas.filter((card) => card.activo).length}/${fichas.length}`);
 console.log(`Preguntas de oro: ${preguntas.length}`);
 console.log(`Preguntas con flujo esperado, evidencia léxica y citas válidas: ${preguntas.length - failures.length}/${preguntas.length}`);
+const sortedLatencies = [...latencies].sort((a, b) => a - b);
+console.log(`Latencia BM25 en este equipo: media ${ (latencies.reduce((a, b) => a + b, 0) / latencies.length).toFixed(2) } ms; p95 ${sortedLatencies[Math.ceil(sortedLatencies.length * 0.95) - 1].toFixed(2)} ms (no es medición Android).`);
 const example = responder("¿Cómo se forma el agua que vemos en Aguacerales?", fichas);
 console.log("EJEMPLO LITERAL:");
 console.log(example.text);

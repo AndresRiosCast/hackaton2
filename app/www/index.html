@@ -73,6 +73,7 @@
         <label class="field-label" for="question">Escribe una pregunta</label>
         <textarea id="question" class="control question-box" rows="3" maxlength="240" placeholder="Por ejemplo: ¿Cómo se forma el agua en Aguacerales?" autocomplete="off" autocapitalize="sentences" aria-describedby="privacy-note question-error"></textarea>
         <p id="question-error" class="field-error" role="alert" hidden></p>
+        <p id="thinking-status" class="answer-note" role="status" aria-live="polite" hidden>Camino está pensando…</p>
         <p id="privacy-note" class="privacy-note">La pregunta solo se usa en este teléfono y se borra al cerrar o reiniciar la consulta.</p>
         <button class="button primary" type="submit">Ver respuesta <span aria-hidden="true">→</span></button>
         <button class="button quiet" type="button" data-back="1">Volver a estación</button>
@@ -99,6 +100,13 @@
       <details class="literal-details">
         <summary>Ver fragmento completo</summary>
         <div id="literal-text" class="literal-text"></div>
+      </details>
+      <details class="literal-details">
+        <summary>Actualizar fichas revisadas (personal)</summary>
+        <p class="helper">Importa el JSON validado por UTON. Se guarda solo el contenido en este teléfono; las preguntas no se almacenan.</p>
+        <label class="field-label" for="content-file">Archivo de fichas JSON</label>
+        <input id="content-file" class="control" type="file" accept="application/json,.json">
+        <p id="content-status" class="answer-note" role="status" aria-live="polite"></p>
       </details>
       <p class="guide-reminder">Para alertas, clima, acceso o salud, consulta siempre al guía o al personal del parque.</p>
       <div class="actions">

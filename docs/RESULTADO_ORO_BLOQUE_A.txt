@@ -1,0 +1,9 @@
+﻿Fichas activas: 28/45
+Preguntas de oro: 60
+Preguntas con flujo esperado, evidencia léxica y citas válidas: 60/60
+Latencia BM25 en este equipo: media 1.39 ms; p95 4.10 ms (no es medición Android).
+EJEMPLO LITERAL:
+El guion describe cómo la vegetación captura humedad de las nubes; las gotas se reúnen sobre musgos y forman hilos de agua que llegan a quebradas de la cuenca del río Chinchiná. El nombre Aguacerales se atribuye a la caída continua de agua que allí se observa y escucha.
+CITA: Guion Ecoturístico UTON 2024, p. 5
+EJEMPLO DE ABSTENCIÓN: No puedo confirmarlo con las fichas disponibles. Consulta al guía o al personal del parque.
+RESULTADO: OK

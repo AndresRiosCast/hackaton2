@@ -1,5 +1,5 @@
 const STOPWORDS = new Set((
-  "a al algo algunos como cual cuando de del donde el ella en es esta este estos fue ha hay la las le lo los mas me mi ni no o para pero por porque que se si sin su sus te un una unas uno y yo guion guiones segun documento fuente"
+  "a al algo algunos como cual cuando de del donde el ella en es esta este estos fue ha hay la las le lo los mas me mi ni no o para pero por porque que se si sin su sus te un una unas uno y yo guion guiones segun documento fuente sirve sirven seria"
 ).split(/\s+/));
 
 const CURRENT_WORDS = /\b(hoy|ahora|actual|actualmente|vigente|todavia|sigue|esta tarde|esta noche)\b/;
@@ -20,9 +20,58 @@ function normalize(value = "") {
 
 function tokenize(value) {
   return normalize(value)
+    .replace(/\b(xq|pq)\b/g, "porque")
+    .replace(/\b(q|k)\b/g, "que")
+    .replace(/\b(pa)\b/g, "para")
     .split(/\s+/)
     .filter((token) => token && !STOPWORDS.has(token) && token.length > 1)
     .map(stemSpanish);
+}
+
+const SEARCH_SYNONYMS = new Map([
+  ["paramo", ["ecosistema", "humedad", "agua"]],
+  ["sirve", ["captura", "abastece", "protege"]],
+  ["agua", ["humedad", "quebradas", "hidrica"]],
+  ["rayada", ["estrias", "marcas"]],
+  ["rayado", ["estrias", "marcas"]],
+  ["piedra", ["rocas", "roca"]],
+  ["arena", ["dunas", "erosion"]],
+  ["significa", ["interpretacion", "nombre"]],
+  ["quiere", ["significado", "interpretacion"]],
+  ["anos", ["edad", "estudios"]],
+  ["ano", ["edad", "estudios"]],
+  ["formo", ["formacion", "origen"]],
+  ["hace", ["formacion", "captura"]],
+].map(([word, synonyms]) => [stemSpanish(word), synonyms]));
+
+function editDistanceAtMostOne(left, right) {
+  if (Math.abs(left.length - right.length) > 1) return false;
+  let i = 0; let j = 0; let edits = 0;
+  while (i < left.length && j < right.length) {
+    if (left[i] === right[j]) { i += 1; j += 1; continue; }
+    edits += 1;
+    if (edits > 1) return false;
+    if (left.length > right.length) i += 1;
+    else if (right.length > left.length) j += 1;
+    else { i += 1; j += 1; }
+  }
+  if (i < left.length || j < right.length) edits += 1;
+  return edits <= 1;
+}
+
+function expandSearchTokens(queryTokens, cards) {
+  const vocabulary = new Set(cards.flatMap((card) => tokenize(card.estacion + " " + card.texto)));
+  const expanded = new Set(queryTokens);
+  for (const token of queryTokens) {
+    for (const synonym of SEARCH_SYNONYMS.get(token) || []) {
+      tokenize(synonym).forEach((item) => expanded.add(item));
+    }
+    if (token.length >= 5 && !vocabulary.has(token)) {
+      const close = [...vocabulary].filter((candidate) => candidate.length >= 5 && editDistanceAtMostOne(token, candidate));
+      if (close.length === 1) expanded.add(close[0]);
+    }
+  }
+  return [...expanded];
 }
 
 function stemSpanish(token) {
@@ -45,7 +94,7 @@ function uniqueSources(cards) {
   });
 }
 
-function bm25(queryTokens, cards) {
+function bm25(queryTokens, cards, preferredStation = "") {
   const docs = cards.map((card) => ({
     card,
     terms: tokenize(`${card.estacion} ${card.texto}`),
@@ -69,9 +118,10 @@ function bm25(queryTokens, cards) {
       const b = 0.75;
       score += idf * ((frequency * (k1 + 1)) / (frequency + k1 * (1 - b + b * terms.length / Math.max(averageLength, 1))));
     }
+    const stationBoost = preferredStation && card.estacion.toLowerCase().includes(preferredStation.toLowerCase()) ? 0.35 : 0;
     return {
       card,
-      score,
+      score: score + stationBoost,
       matched: [...matched],
       coverage: matched.size / Math.max(new Set(queryTokens).size, 1),
     };
@@ -107,6 +157,16 @@ export function responder(query, cards, options = {}) {
   const all = Array.isArray(cards) ? cards : [];
   if (!normalized || !all.length) return abstain("Consulta vacía o no hay fichas cargadas.");
 
+  if (/^(hola|hola camino|holi|buenos dias|buenas tardes|buenas noches|hey|que mas|como estas)$/.test(normalized)) {
+    return { status: "social", text: "¡Hola! Soy Camino. Puedo ayudarte a explorar lo que cuentan los guiones del parque; tu guía te acompaña en el recorrido.", sources: [], evidence: [], note: "" };
+  }
+  if (/^(gracias|muchas gracias|gracias por la info|listo gracias|chao|adios|hasta luego)$/.test(normalized)) {
+    return { status: "social", text: "¡Con gusto! Sigue disfrutando el recorrido junto a tu guía.", sources: [], evidence: [], note: "" };
+  }
+  if (/^(quien eres|como te llamas|quien eres camino)$/.test(normalized)) {
+    return { status: "social", text: "Soy Camino, una compañera digital para consultar los guiones. No reemplazo a tu guía.", sources: [], evidence: [], note: "" };
+  }
+
   if (INJECTION_WORDS.test(normalized)) return abstain("La consulta intenta cambiar las reglas de respuesta.");
   if (HEALTH_WORDS.test(normalized)) return abstain("Las consultas de salud se derivan al guía o personal; no diagnosticar ni recomendar tratamientos.");
   if (ALERT_WORDS.test(normalized) && CURRENT_WORDS.test(normalized)) return abstain("El nivel de alerta es cambiante y los guiones no confirman el estado de hoy.");
@@ -124,6 +184,9 @@ export function responder(query, cards, options = {}) {
   }
   if (/\b(duna|dunas)\b/.test(normalized) && /\b(pisar|caminar|pasar|intervenir|foto|fotografia)\b/.test(normalized)) {
     return evidence(cardsById(all, ["NEV-ARE-003"]), "answered", "Sigue las indicaciones del guía y no intervengas la duna.");
+  }
+  if (/\b(duna|dunas|arenales)\b/.test(normalized) && /\b(edad|anos|antiguedad|viejas|antiguas)\b/.test(normalized)) {
+    return evidence(cardsById(all, ["NEV-ARE-002"]), "review_required", "El guion lo presenta como una estimación pendiente de estudios; no es una edad confirmada.");
   }
   if (/\b(valle de las tumbas)\b/.test(normalized) && /\b(ascender|ascenso|seguir|subir|continuar|despues|mas alto)\b/.test(normalized)) {
     return evidence(cardsById(all, ["NEV-TUM-003"]), "answered", "Para instrucciones actuales, sigue al guía o personal.");
@@ -146,6 +209,9 @@ export function responder(query, cards, options = {}) {
   if (/\b(aguacerales)\b/.test(normalized) && /\b(ecosistema|paramo)\b/.test(normalized)) {
     return evidence(cardsById(all, ["NEV-AGU-001"]), "answered");
   }
+  if (/\b(paramo|ecosistema)\b/.test(normalized) && /\b(sirve|funcion|agua|protege|importancia)\b/.test(normalized)) {
+    return evidence(cardsById(all, ["NEV-AGU-001", "NEV-AGU-002", "NEV-AGU-004"]), "multi_source", "Estos fragmentos describen Aguacerales y la función hídrica que los guiones atribuyen a la vegetación; no son una definición general del páramo.");
+  }
   if (/\b(aguacerales)\b/.test(normalized) && /\b(nombre|llama|llamado|por que)\b/.test(normalized)) {
     return evidence(cardsById(all, ["NEV-AGU-002"]), "answered");
   }
@@ -155,7 +221,7 @@ export function responder(query, cards, options = {}) {
   if (/\b(arenales)\b/.test(normalized) && /\b(arena|duna|dunas|formacion|origen|viene)\b/.test(normalized) && !/\b(edad|anos|antiguedad)\b/.test(normalized)) {
     return evidence(cardsById(all, ["NEV-ARE-006"]), "answered");
   }
-  if (/\b(gelifraccion|estrias glaciares|estrias|oxidacion del hierro)\b/.test(normalized)) {
+  if (/\b(gelifraccion|estrias glaciares|estrias|oxidacion del hierro)\b/.test(normalized) || (/\b(rayada|rayado|rayas|marcas)\b/.test(normalized) && /\b(lunares|piedra|roca|glaciar|montana)\b/.test(normalized))) {
     return evidence(cardsById(all, ["NEV-LUN-002"]), "answered");
   }
   if (/\b(lunares|valle lunar)\b/.test(normalized) && /\b(altura|altitud|msnm)\b/.test(normalized)) {
@@ -181,7 +247,7 @@ export function responder(query, cards, options = {}) {
   if (/\b(23 000|23000|25 000|25000|victimas|murieron|personas murieron|cuantas personas)\b/.test(normalized) && /\b(1985|armero|erupcion|muertos|personas)\b/.test(normalized)) {
     return evidence(cardsById(all, ["NEV-HIS-001", "NEV-HIS-002"]), "conflict", "Los propios guiones difieren; no se elige una cifra.");
   }
-  if (/\b(kumanday|kumandai|cumanday)\b/.test(normalized) && /\b(significa|significado|traduce|origen|nombre)\b/.test(normalized)) {
+  if (/\b(kumanday|kumandai|cumanday)\b/.test(normalized) && /\b(significa|significado|traduce|origen|nombre|quiere decir)\b/.test(normalized)) {
     return evidence(cardsById(all, ["NEV-CUL-001", "NEV-CUL-002"]), "conflict", "Los significados se presentan como atribuciones culturales y su procedencia es incierta.");
   }
   if (/\b(kumanday|kumandai|cumanday)\b/.test(normalized) && /\b(ritual|peregrinaciones?|relacion|comunidades prehispanicas)\b/.test(normalized)) {
@@ -213,7 +279,7 @@ export function responder(query, cards, options = {}) {
   }
 
   const activeCards = all.filter((card) => card.activo === true);
-  const candidates = bm25(tokenize(query), activeCards);
+  const candidates = bm25(expandSearchTokens(tokenize(query), activeCards), activeCards, options.station || "");
   const best = candidates[0];
   const minMatches = 2;
   if (!best || best.score < (options.threshold ?? 0.28) || best.matched.length < minMatches || best.coverage < (options.coverage ?? 0.25)) {

@@ -1,4 +1,6 @@
 import { responder } from "./core/respuesta.js";
+import { cargarFichas, importarFichas } from "./core/contenido_local.js";
+import { redactarConRespaldo } from "./core/redaccion_local.js";
 
 const screens = [...document.querySelectorAll("[data-screen]")];
 const stepItems = [...document.querySelectorAll("[data-step-indicator]")];
@@ -56,8 +58,7 @@ function showScreen(number, moveFocus = true) {
 }
 
 function stationCards() {
-  if (chosenStation === "general") return cards;
-  return cards.filter((card) => card.estacion === "general" || card.estacion.includes(chosenStation));
+  return cards;
 }
 
 function renderResult(result) {
@@ -80,6 +81,13 @@ function renderResult(result) {
       article.append(heading, page);
       sourceList.append(article);
     });
+  } else if (result.status === "social") {
+    const card = document.createElement("article");
+    card.className = "source-card";
+    const text = document.createElement("p");
+    text.textContent = "Mensaje breve de Camino; no es información del parque.";
+    card.append(text);
+    sourceList.append(card);
   } else {
     const card = document.createElement("article");
     card.className = "source-card";
@@ -103,7 +111,7 @@ document.querySelectorAll("[data-next]").forEach((button) => {
 document.querySelectorAll("[data-back]").forEach((button) => {
   button.addEventListener("click", () => showScreen(Number(button.dataset.back)));
 });
-document.querySelector("#question-form").addEventListener("submit", (event) => {
+document.querySelector("#question-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const query = questionField.value.trim();
   if (!query) {
@@ -116,7 +124,21 @@ document.querySelector("#question-form").addEventListener("submit", (event) => {
   }
   document.querySelector("#question-error").hidden = true;
   document.querySelector("#question-error").textContent = "";
-  renderResult(responder(query, stationCards()));
+  const literalResult = responder(query, stationCards());
+  const submit = document.querySelector("#question-form button[type=submit]");
+  const thinking = document.querySelector("#thinking-status");
+  submit.disabled = true;
+  const showThinking = setTimeout(() => { thinking.hidden = false; announce("Camino está pensando."); }, 200);
+  try {
+    const literalResult = responder(query, stationCards(), { station: chosenStation === "general" ? "" : chosenStation });
+    renderResult(await redactarConRespaldo(literalResult, undefined, query));
+  } catch {
+    renderResult(responder(query, stationCards(), { station: chosenStation === "general" ? "" : chosenStation }));
+  } finally {
+    clearTimeout(showThinking);
+    thinking.hidden = true;
+    submit.disabled = false;
+  }
   showScreen(3, false);
   answerText.focus();
 });
@@ -136,9 +158,7 @@ document.querySelector("[data-reset]").addEventListener("click", () => {
 
 async function loadLocalContent() {
   try {
-    const response = await fetch("./content/fichas.json", { cache: "force-cache" });
-    if (!response.ok) throw new Error("No se pudo leer el contenido local.");
-    const dataset = await response.json();
+    const dataset = await cargarFichas();
     cards = dataset.fichas;
     if (!cards.length) throw new Error("No hay fichas activas cargadas.");
   } catch {
@@ -147,5 +167,20 @@ async function loadLocalContent() {
     announce("Las fichas locales no están disponibles. La app no consultará internet.");
   }
 }
+
+document.querySelector("#content-file").addEventListener("change", async (event) => {
+  const status = document.querySelector("#content-status");
+  try {
+    const dataset = await importarFichas(event.target.files?.[0]);
+    cards = dataset.fichas;
+    status.textContent = `Fichas ${dataset.version_conjunto} cargadas: ${cards.length}. La actualización queda disponible sin conexión.`;
+    announce(status.textContent);
+  } catch (error) {
+    status.textContent = error.message || "No se pudo validar el archivo.";
+    announce(status.textContent);
+  } finally {
+    event.target.value = "";
+  }
+});
 
 await loadLocalContent();
