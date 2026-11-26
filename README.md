@@ -4,7 +4,7 @@ Prototipo Android para apoyar al guía en el recorrido Brisas → Aguacerales �
 
 ## Fase 2
 
-El flujo de cuatro pasos, ilustración original Niva y proyecto Android de Capacitor 8.6.3 están preparados. El contenido se empaqueta desde JSON local. No hay APK todavía: la compilación en este sandbox falla cuando Java resuelve rutas del SDK. Tampoco se pudo instalar en un teléfono ni probar modo avión desde esta sesión.
+El flujo de cuatro pasos, ilustración original Niva y proyecto Android de Capacitor 8.6.3 están preparados. El contenido se empaqueta desde JSON local. El APK debug ya se compiló desde la sesión de Usuario (`app/android/app/build/outputs/apk/debug/app-debug.apk`, 4.137.762 bytes; ver `docs/COMPILACION_FASE_2.md`). La compilación desde el sandbox de Codex falló al resolver rutas del SDK. Falta instalar el APK en un teléfono y probar modo avión: no hay dispositivo conectado, por lo que la Fase 2 no está cerrada.
 
 ## Construcción en Windows
 
