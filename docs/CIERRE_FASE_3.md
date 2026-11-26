@@ -1,4 +1,6 @@
-﻿# Cierre de Fase 3 — estado de entrega
+﻿# Estado de Fase 3 - entrega parcial (NO cerrada)
+
+> Fase 3 **no está cerrada**: faltan el módulo nativo LiteRT-LM, el archivo de modelo, la APK actualizada y las mediciones en el Galaxy A05. Este documento registra lo preparado y lo pendiente; no afirma el requisito de LLM local como terminado.
 
 ## Hecho en esta carpeta
 
@@ -15,10 +17,10 @@ Preguntas de oro: 60
 Preguntas con flujo esperado, evidencia léxica y citas válidas: 60/60
 Latencia BM25 en este equipo: media 1.39 ms; p95 4.10 ms (no es medición Android).
 RESULTADO: OK
-Resultado redactor/contenido: 5/5
+Resultado redactor/contenido: 5/5 (prueba de escritorio/JS, no ejecutada en Android)
 ```
 
-La APK existente está en `app/android/app/build/outputs/apk/debug/app-debug.apk` (4,137,762 bytes, 2026-11-26 14:12). Es la build de Fase 2; **no incluye estas modificaciones**. No se reconstruyó mientras el usuario prueba esa APK.
+La APK original de Fase 2 era `app/android/app/build/outputs/apk/debug/app-debug.apk` (4.137.762 bytes, 2026-11-26 14:12) y **no incluía estas modificaciones**. Desde la sesión de Usuario se sincronizaron los assets y se recompiló: la APK actual con estos cambios es `C:\Users\Usuario\Desktop\APK-Codex-NUEVA.apk` (4.144.612 bytes, SHA-256 `3CAFE894784ACEE62014F4C1ED4EF2EFA5FBCD1CF46E5F46A3A5B639CEFBD3A9`). Sigue sin instalarse ni probarse en teléfono.
 
 ## Pendiente que impide afirmar Fase 3 completa
 
