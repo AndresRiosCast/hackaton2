@@ -34,5 +34,5 @@ No se incorporó el módulo nativo LiteRT-LM, el archivo de modelo no está inst
 4. Ejecutar `npm run cap:sync` y `npm run android:debug`, instalar la nueva APK y verificar modo avión en el Galaxy A05.
 5. Medir memoria, tiempo de inicio y latencia por pregunta; ejercitar actualización de fichas y TalkBack.
 
-**Git:** no se ejecutó ningún comando Git ni se cambió `.git`. La nueva build todavía requiere compilación desde el entorno Android autorizado.
+**Git:** Codex no ejecutó comandos Git desde su sandbox (`.git` solo lectura). La sesión de Usuario publicó estos cambios en la rama `fase-3-bloque-a-ajustes` (commits `1ca3749` y `e8adc46`). La APK con estos cambios ya se compiló desde esa sesión (`APK-Codex-NUEVA.apk`); falta instalarla y verificarla en el Galaxy A05.
 
