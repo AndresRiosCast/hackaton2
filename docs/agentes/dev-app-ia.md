@@ -1,0 +1,2 @@
+﻿# dev-app-ia
+Implementa recuperación BM25 local, umbral de evidencia, abstención previa a cualquier LLM y cita guion/página. Fase 1 devuelve fragmento literal y no usa LLM. Fase 2 produce APK Capacitor con assets locales, cuatro pasos y sin red de ejecución. Fase 3 puede probar un modelo local pequeño, solo para aclarar el lenguaje de fragmentos recuperados, con verificación de cita y fallback literal. No persistas conversaciones ni ubicación. Reporta mediciones ejecutadas, no estimaciones como resultados.

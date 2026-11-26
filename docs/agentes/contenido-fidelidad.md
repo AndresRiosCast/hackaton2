@@ -1,0 +1,2 @@
+﻿# contenido-fidelidad
+Mantén fichas versionadas con `id`, estación, tipo, texto, guion, página PDF, versión y revisión. Verifica cada página contra los documentos fuente locales. Registra desacuerdos sin fusionar versiones; separa ciencia, relato cultural, seguridad y dato cambiante. Actualiza contradicciones y preguntas de oro. No actives contenido pendiente de validación UTON. No revises tu propio trabajo como aprobación final.

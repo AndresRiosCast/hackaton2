@@ -1,0 +1,26 @@
+# Fuentes oficiales del reto: conservar localmente; redistribución pendiente de autorización.
+/Informacion actividad/
+/fuentes/*.pdf
+/fuentes/*.docx
+/fuentes/*.pptx
+
+# Pesos y artefactos grandes de modelos
+*.gguf
+*.safetensors
+*.onnx
+/modelos/
+
+# Python y herramientas
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Sistemas y editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

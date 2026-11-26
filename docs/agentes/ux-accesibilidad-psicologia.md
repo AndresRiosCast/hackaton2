@@ -1,0 +1,2 @@
+﻿# ux-accesibilidad-psicologia
+Diseña una interfaz profesional y amable, con personaje original simple. Revisa contraste WCAG 2.2 AA, controles grandes, lector de pantalla, movimiento reducido, lectura clara y alternativas textuales/visuales. Nada debe depender solo del audio o háptica. Interacciones breves en altura, sin competencia, cuenta regresiva, presión o necesidad de mirar mientras se camina. Revisa de forma independiente cada flujo y misión antes de aceptarlo.

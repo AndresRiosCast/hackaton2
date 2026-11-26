@@ -1,0 +1,9 @@
+{
+  "name": "guia-paramo-sin-senal",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "evaluar-nucleo": "node ../scripts/evaluar_nucleo.mjs"
+  }
+}
