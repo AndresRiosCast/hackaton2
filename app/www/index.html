@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173e39">
+  <meta name="description" content="Apoyo offline para interpretar el recorrido del PNN Los Nevados junto al guía.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data:; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Guía de páramo sin señal</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="topbar">
+    <div class="brand" aria-label="Guía de páramo sin señal">
+      <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 39 18 15l7 12 6-9 12 21H5Z" fill="currentColor"/><path d="m18 15 4 7-5-2 4 5-7-2" fill="none" stroke="#f8f5e9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+      <span>Guía de páramo <small>PNN Los Nevados</small></span>
+    </div>
+    <span class="offline-badge"><span class="offline-dot" aria-hidden="true"></span> Funciona sin conexión</span>
+  </header>
+
+  <main id="contenido" class="layout">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="character-wrap" aria-hidden="true">
+        <svg class="character" viewBox="0 0 100 100">
+          <path d="M12 82 34 37l11 19 11-32 33 58H12Z" fill="#d8e8dc" stroke="#173e39" stroke-width="3" stroke-linejoin="round"/>
+          <path d="m45 56 11-32 12 21-10-4-3 10-5-5Z" fill="#f6f2e6"/>
+          <circle cx="72" cy="67" r="13" fill="#efc078" stroke="#173e39" stroke-width="3"/>
+          <path d="M65 65h.5m12 0h.5" stroke="#173e39" stroke-linecap="round" stroke-width="3"/>
+          <path d="M68 72q4 4 8 0" fill="none" stroke="#173e39" stroke-linecap="round" stroke-width="2"/>
+          <path d="M59 61q13-11 25 0" fill="none" stroke="#b85d42" stroke-linecap="round" stroke-width="5"/>
+        </svg>
+        <span class="character-label">Niva, guía de páramo</span>
+      </div>
+      <p class="eyebrow">Una pregunta a la vez</p>
+      <h1 id="page-title">Explora con calma</h1>
+      <p class="intro-copy">Consulta información de los guiones del parque. Tu guía sigue siendo quien orienta el recorrido.</p>
+    </section>
+
+    <nav class="steps" aria-label="Pasos de consulta">
+      <ol>
+        <li class="step current" data-step-indicator="1"><span>1</span><span>Estación</span></li>
+        <li class="step" data-step-indicator="2"><span>2</span><span>Pregunta</span></li>
+        <li class="step" data-step-indicator="3"><span>3</span><span>Respuesta</span></li>
+        <li class="step" data-step-indicator="4"><span>4</span><span>Fuente</span></li>
+      </ol>
+    </nav>
+
+    <div id="app-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <section class="panel" data-screen="1" aria-labelledby="step1-title">
+      <p class="step-kicker">Paso 1 de 4</p>
+      <h2 id="step1-title" tabindex="-1">¿En qué estación estás?</h2>
+      <p class="helper">Elige el punto del recorrido. No usamos ni guardamos tu ubicación.</p>
+      <label class="field-label" for="station">Estación del recorrido</label>
+      <select id="station" class="control">
+        <option value="general">Todo el recorrido</option>
+        <option value="Brisas">Brisas</option>
+        <option value="Aguacerales">Aguacerales</option>
+        <option value="Arenales">Arenales</option>
+        <option value="Lunares">Lunares / Valle Lunar</option>
+        <option value="Valle de las Tumbas">Valle de las Tumbas</option>
+      </select>
+      <button class="button primary" type="button" data-next="2">Continuar <span aria-hidden="true">→</span></button>
+    </section>
+
+    <section class="panel" data-screen="2" aria-labelledby="step2-title" hidden>
+      <p class="step-kicker">Paso 2 de 4</p>
+      <h2 id="step2-title" tabindex="-1">¿Qué te gustaría saber?</h2>
+      <p class="helper" id="selected-station"></p>
+      <form id="question-form" novalidate>
+        <label class="field-label" for="question">Escribe una pregunta</label>
+        <textarea id="question" class="control question-box" rows="3" maxlength="240" placeholder="Por ejemplo: ¿Cómo se forma el agua en Aguacerales?" autocomplete="off" autocapitalize="sentences" aria-describedby="privacy-note question-error"></textarea>
+        <p id="question-error" class="field-error" role="alert" hidden></p>
+        <p id="privacy-note" class="privacy-note">La pregunta solo se usa en este teléfono y se borra al cerrar o reiniciar la consulta.</p>
+        <button class="button primary" type="submit">Ver respuesta <span aria-hidden="true">→</span></button>
+        <button class="button quiet" type="button" data-back="1">Volver a estación</button>
+      </form>
+    </section>
+
+    <section class="panel" data-screen="3" aria-labelledby="step3-title" hidden>
+      <p class="step-kicker">Paso 3 de 4</p>
+      <h2 id="step3-title" tabindex="-1">Una respuesta con respaldo</h2>
+      <div id="answer-status" class="answer-status" aria-live="polite"></div>
+      <div id="answer-text" class="answer-text" tabindex="-1" aria-label="Respuesta literal"></div>
+      <p id="answer-note" class="answer-note" hidden></p>
+      <div class="actions">
+        <button class="button primary" type="button" data-next="4">Verificar fuente <span aria-hidden="true">→</span></button>
+        <button class="button quiet" type="button" data-back="2">Cambiar pregunta</button>
+      </div>
+    </section>
+
+    <section class="panel" data-screen="4" aria-labelledby="step4-title" hidden>
+      <p class="step-kicker">Paso 4 de 4</p>
+      <h2 id="step4-title" tabindex="-1">¿De dónde salió?</h2>
+      <p class="helper">Puedes revisar el texto y la página que respaldan la respuesta.</p>
+      <div id="sources-list" class="sources-list" aria-label="Fuentes citadas"></div>
+      <details class="literal-details">
+        <summary>Ver fragmento completo</summary>
+        <div id="literal-text" class="literal-text"></div>
+      </details>
+      <p class="guide-reminder">Para alertas, clima, acceso o salud, consulta siempre al guía o al personal del parque.</p>
+      <div class="actions">
+        <button class="button primary" type="button" data-reset>Hacer otra pregunta</button>
+        <button class="button quiet" type="button" data-back="3">Volver a respuesta</button>
+      </div>
+    </section>
+
+    <footer class="footer-note">Apoyo al guía · Sin cuentas · Sin ubicación guardada</footer>
+  </main>
+</body>
+</html>

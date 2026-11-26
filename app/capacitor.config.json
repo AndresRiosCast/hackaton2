@@ -1,0 +1,12 @@
+﻿{
+  "appId": "org.uton.guiaparamonosignal",
+  "appName": "Guía de páramo",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

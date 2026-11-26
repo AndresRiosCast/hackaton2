@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Guía de páramo</string>
+    <string name="title_activity_main">Guía de páramo</string>
+    <string name="package_name">org.uton.guiaparamonosignal</string>
+    <string name="custom_url_scheme">org.uton.guiaparamonosignal</string>
+</resources>

@@ -24,3 +24,18 @@ venv/
 Thumbs.db
 .idea/
 .vscode/
+
+# Dependencias y cachés locales (no incluir en entregas Git)
+/.gradle-user/
+/app/node_modules/
+/app/.npm-cache/
+/app/.gradle-user/
+/app/.android-user/
+/app/.android-sdk/
+/app/android/.gradle/
+/app/android/.gradle-user/
+/app/android/local.properties
+/app/android/**/build/
+/app/VerifySdkPath.java
+/app/temp-sdk-core.jar
+/app/vendor-capacitor-*.tgz

@@ -1,31 +1,46 @@
 ﻿# Guía de páramo sin señal
 
-Prototipo Android para apoyar la interpretación ambiental durante el recorrido Brisas → Aguacerales → Arenales → Lunares → Valle de las Tumbas. No sustituye al guía.
+Prototipo Android para apoyar al guía en el recorrido Brisas → Aguacerales → Arenales → Lunares → Valle de las Tumbas. La app contiene la interfaz, búsqueda BM25 y fichas locales dentro del APK; no envía consultas fuera del teléfono.
 
-## Estado actual
-Fase 1: 45 fichas JSON versionadas, 60 preguntas de oro y núcleo JavaScript de recuperación BM25 literal con reglas de abstención y citas. El evaluador local acaba de pasar 60/60. Todavía no hay APK ni prueba de instalación en teléfono.
+## Fase 2
 
-## Dispositivo objetivo
-Referencia: Samsung Galaxy A05 Dual SIM, 64 GB y 4 GB RAM, informado por el usuario. Se diseña para un rango amplio de Android moderno; el Galaxy no define por sí solo el mínimo. La documentación actual de Capacitor 8 declara soporte API 24+ (Android 7 o posterior), sujeto a pruebas reales de pantalla, WebView, memoria y rendimiento. La versión Android del teléfono se desconoce.
+El flujo de cuatro pasos, ilustración original Niva y proyecto Android de Capacitor 8.6.3 están preparados. El contenido se empaqueta desde JSON local. No hay APK todavía: la compilación en este sandbox falla cuando Java resuelve rutas del SDK. Tampoco se pudo instalar en un teléfono ni probar modo avión desde esta sesión.
 
-## Ejecución local del evaluador
-Requiere Node.js:
+## Construcción en Windows
 
-```powershell
-node scripts/evaluar_nucleo.mjs
-```
+Requisitos: Node.js 22+, Android Studio/JDK 21 y Android SDK API 36 con Build Tools 35.0.0. El APK declara minSdk 24 (Android 7+). Galaxy A05 4 GB/64 GB es dispositivo de referencia, no el único objetivo. La versión Android de ese teléfono no se conoce.
 
-La app Android y el APK se construyen en Fase 2. Todo el contenido de ejecución debe estar dentro del APK y el recorrido se probará en modo avión. No hay llamadas remotas de runtime.
+En PowerShell:
+
+    Set-Location 'C:\Users\Usuario\Desktop\Hackaton2\app'
+    $env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
+    $env:ANDROID_HOME = 'C:\Users\Usuario\AppData\Local\Android\Sdk'
+    $env:ANDROID_SDK_ROOT = $env:ANDROID_HOME
+    npm.cmd ci
+    npm.cmd run android:debug
+
+El APK esperado queda en app/android/app/build/outputs/apk/debug/app-debug.apk. La preparación de build puede requerir descargar dependencias; ya instalada, la app no requiere internet.
+
+## Instalar y probar en modo avión
+
+Conecta el teléfono por USB, habilita Opciones de desarrollador y Depuración USB y acepta la huella del computador. Instala con el teléfono conectado y luego activa modo avión:
+
+    $apk = 'C:\Users\Usuario\Desktop\Hackaton2\app\android\app\build\outputs\apk\debug\app-debug.apk'
+    & 'C:\Users\Usuario\AppData\Local\Android\Sdk\platform-tools\adb.exe' install -r $apk
+
+Elige una estación, pregunta cómo se forma el agua en Aguacerales y verifica Guion Ecoturístico UTON 2024, p. 5. Prueba la edad de las dunas (debe marcarse como estimación y citar p. 7), alerta de hoy y salud (deben abstenerse y remitir al personal). ADB se usa para instalar; la consulta ocurre en el propio dispositivo.
+
+La app no pide ubicación, no guarda conversaciones y no incluye permiso Android INTERNET. No implementa GPS, misiones, AR, voz ni inglés.
 
 ## Estructura
-- `app/www/core/`: recuperación y respuesta literal en JavaScript.
-- `contenido/fichas/`: contenido versionado con fuente y página.
-- `contenido/preguntas_oro-v1.0.0.json`: evaluación curada.
-- `scripts/`: evaluación local reproducible.
-- `docs/adr/`: decisión de arquitectura vigente.
-- `docs/research/`: una nota técnica vigente; investigaciones anteriores preservadas en `archivo/`.
-- `docs/BITACORA.md`: decisiones, resultados y riesgos por fase.
-- `fuentes/`: copias locales de materiales oficiales, excluidas de Git por defecto.
 
-## Licencias y fuentes
-Licencia del código pendiente de decisión. Los materiales oficiales se usan solo para este reto y no deben publicarse sin autorización. Licencias de cualquier modelo local se verificarán antes de distribuirlo. Los modelos pesados no se incorporan al repositorio.
+- app/www: interfaz, personaje y núcleo JavaScript.
+- app/android: proyecto nativo Capacitor.
+- contenido/fichas: fichas versionadas con fuente y página.
+- scripts/evaluar_nucleo.mjs: evaluación automática.
+- scripts/preparar_assets.mjs: copia fichas al paquete Android.
+- docs/ACCESIBILIDAD_FASE_2.md: revisión independiente y límites.
+- docs/CIERRE_FASE_2.md: resultados técnicos.
+- docs/ENTREGA_FASE_2.md: instrucciones de build, prueba y publicación.
+
+Código/licencia pendientes de definir. Los guiones oficiales se usan para este reto; no redistribuir sin autorización.

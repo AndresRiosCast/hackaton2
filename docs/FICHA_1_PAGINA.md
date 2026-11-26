@@ -1,11 +1,11 @@
 ﻿# Ficha de una página — Guía de páramo sin señal
 
-**Problema.** En el recorrido Brisas–Aguacerales–Arenales–Lunares–Valle de las Tumbas no hay conectividad fiable; el guía necesita un apoyo breve y trazable.
+**Problema.** En el recorrido Brisas–Aguacerales–Arenales–Lunares–Valle de las Tumbas puede faltar conexión; la persona guía necesita apoyo breve y trazable.
 
-**Propuesta.** APK Android con contenido oficial curado y almacenado dentro de la app. Búsqueda local y respuestas literales con guion y página. Se abstiene ante falta de respaldo, contradicciones no resolubles y preguntas de salud, alerta, clima o acceso actual.
+**Propuesta.** APK Android empaquetado con fichas locales. Recuperación BM25 literal con guion y página. Ante falta de respaldo, contradicciones o consulta de salud, alerta, clima o acceso actual, se abstiene y deriva al personal. La Fase 2 incorpora un flujo de cuatro pasos, accesibilidad inicial y personaje SVG original.
 
-**Estado comprobado al cierre de Fase 1.** 45 fichas versionadas, 28 activas; 60 preguntas de oro. Evaluador Node: 60/60 pasan control de flujo, evidencia léxica y citas. No hay APK, prueba de campo, medición energética ni latencia móvil aún.
+**Pruebas de Fase 1 repetidas:** 45 fichas, 28 activas; 60 preguntas de oro, 60/60 pasan el evaluador. **Fase 2:** el proyecto Capacitor y la sincronización local de assets están generados. Los JSON empacados tienen SHA-256 coincidente 816122d1e53e071bd5daa158593ec969a600fded3c3006a36efb5b485a469c32. La compilación se bloqueó dentro del sandbox en javac al resolver el SDK; no hay APK aún ni instalación/modo avión probados.
 
-**Equipo de referencia.** Samsung Galaxy A05, 4 GB RAM, 64 GB, informado por el usuario. La versión de Android no se conoce. Objetivo amplio: Android moderno; API 24+ es punto inicial conforme a documentación de Capacitor, no promesa universal. Próximo hito es construir APK debug y probar instalación y uso en modo avión en varios dispositivos.
+**Referencia.** Samsung Galaxy A05, 4 GB RAM/64 GB, según el usuario; versión Android no indicada. Meta amplia Android API 24+ inicial, pendiente de matriz con dispositivos reales; no es una promesa de compatibilidad universal. iOS queda fuera del MVP Android.
 
-**Límites abiertos.** Validación editorial de UTON; autorización para publicar contenido oficial; compatibilidad y rendimiento en hardware; idioma inglés solo tras revisión de fidelidad. Código/licencia del proyecto por definir.
+**Pendientes.** Compilar desde la sesión normal de Usuario, instalar en Galaxy y probar en modo avión, hacer evaluación TalkBack/varios tamaños, obtener validación UTON para las fichas y permiso de redistribución de extractos. Código/licencia por definir.

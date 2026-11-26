@@ -1,4 +1,4 @@
-﻿# Bitácora
+# Bitácora
 
 ## Fase 0 — Fundación (2026-11-26)
 
@@ -15,3 +15,11 @@
 - **Qué probamos y qué resultó:** `node scripts/evaluar_nucleo.mjs` reportó 28/45 fichas activas, 60 preguntas y 60/60 controles pasados. El ejemplo recuperó Guion Ecoturístico UTON 2024, p. 5; alerta de hoy produjo abstención. No se midió tiempo móvil ni consumo y aún no hay APK.
 - **Qué nos preocupa:** Las fichas requieren revisión final de UTON. API 24+ es objetivo inicial de Capacitor, pero falta probar equipos distintos; Android exacto del Galaxy no está confirmado. Git commit/push/tag siguen pendientes de la sesión que puede escribir `.git`.
 - **Frase para el pitch:** “Cada respuesta enseña de qué página salió; cuando el documento no alcanza, el sistema se hace a un lado y deja al guía al frente.”
+ 
+## Fase 2 — MVP Android (2026-11-26)
+
+- **Qué hicimos hoy:** Codex preparó el flujo de cuatro pasos en Capacitor con fichas locales y personaje original Niva; no tocó el checkout paralelo de OpenCode ni ejecutó Git.
+- **Por qué lo hicimos así:** Se quitó el permiso Android de internet y se evita guardar preguntas o ubicación; las consultas de hoy, salud y datos sin respaldo siguen derivándose al guía.
+- **Qué probamos y qué resultó:** Dependencias offline (98 paquetes), cap add android y sincronización de assets finalizaron; los tres JSON tienen el mismo SHA-256. El núcleo vuelve a pasar 60/60; una prueba de estación cubre respuesta, dato en revisión y dos abstenciones (4/4). UX independiente dejó cuatro correcciones aplicadas y QA no halló red ni persistencia de preguntas. Gradle no produjo APK por AccessDeniedException del sandbox y ADB tampoco pudo crear su carpeta de preferencias; modo avión en teléfono sigue sin probarse.
+- **Qué nos preocupa:** La etiqueta v0.2 ya identifica Fase 1; no se puede reutilizar para el MVP. Falta que la sesión normal de Usuario compile e instale el APK, y después revisar TalkBack y varios teléfonos.
+- **Frase para el pitch:** “La guía cabe en el teléfono y la fuente queda a un toque; si el contenido no alcanza, no compite con la voz del guía.”
